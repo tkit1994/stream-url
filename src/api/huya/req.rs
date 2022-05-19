@@ -1,6 +1,6 @@
 use log::{debug};
 use reqwest::header::{HeaderMap, ACCEPT, REFERER, USER_AGENT};
-
+use anyhow::Result;
 use crate::api::{huya::model::HuyaResp, GetUrl};
 
 pub struct StreamRoom {
@@ -16,7 +16,7 @@ impl StreamRoom {
 }
 
 impl GetUrl for StreamRoom {
-    fn get_stream_url(&self) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+    fn get_stream_url(&self) -> Result<Vec<String>> {
         let client = reqwest::blocking::Client::builder().build().unwrap();
         let mut headers = HeaderMap::new();
         headers.insert(

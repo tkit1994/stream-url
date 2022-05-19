@@ -1,5 +1,5 @@
-use std::error::Error;
 
+use anyhow::Result;
 use crate::api::GetUrl;
 
 use super::model::{PlayUrlResp, QNData};
@@ -21,7 +21,7 @@ impl StreamRoom {
 }
 
 impl GetUrl for StreamRoom {
-    fn get_stream_url(&self) -> Result<Vec<String>, Box<dyn Error>> {
+    fn get_stream_url(&self) -> Result<Vec<String>> {
         let client = reqwest::blocking::Client::builder().build()?;
 
         let resp = client

@@ -1,8 +1,7 @@
 use std::{
-    error::Error,
     time::{SystemTime, UNIX_EPOCH},
 };
-
+use anyhow::Result;
 use log::debug;
 
 use crate::api::GetUrl;
@@ -33,7 +32,7 @@ impl StreamRoom {
             cdns,
         }
     }
-    pub fn get_js(&self) -> Result<String, Box<dyn Error>> {
+    pub fn get_js(&self) -> Result<String> {
         let client = reqwest::blocking::Client::builder().build()?;
 
         let req = client
@@ -87,7 +86,7 @@ impl StreamRoom {
 }
 
 impl GetUrl for StreamRoom {
-    fn get_stream_url(&self) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+    fn get_stream_url(&self) -> Result<Vec<String>> {
         let client = reqwest::blocking::Client::builder().build()?;
         let params = self.get_js()?;
         let params = format!("{}&ver=219032101&rid={}&rate=-1", params, self.roomd_id);
