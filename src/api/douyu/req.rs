@@ -3,7 +3,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use log::{debug};
+use log::debug;
 
 use crate::api::GetUrl;
 
@@ -19,8 +19,8 @@ impl StreamRoom {
     pub fn new(roomd_id: i32) -> Self {
         let ts = SystemTime::now().duration_since(UNIX_EPOCH).expect("");
         let cdns = vec![
-            "dyscdnali1.douyucdn.cn".to_string(),
-            "dyscdnali3.douyucdn.cn".to_string(),
+            "vplay1a.douyucdn.cn".to_string(),
+            "vplay3a.douyucdn.cn".to_string(),
             "hls3-akm.douyucdn.cn".to_string(),
             "hlsa-akm.douyucdn.cn".to_string(),
             "hls1a-akm.douyucdn.cn".to_string(),
