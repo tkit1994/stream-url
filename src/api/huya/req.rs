@@ -1,4 +1,4 @@
-use log::info;
+use log::{debug};
 use reqwest::header::{HeaderMap, ACCEPT, REFERER, USER_AGENT};
 
 use crate::api::{huya::model::HuyaResp, GetUrl};
@@ -38,21 +38,22 @@ impl GetUrl for StreamRoom {
         let re = fancy_regex::Regex::new(r"(?ms)hyPlayerConfig = (?P<cfg>{.*?});")?;
         let cap = re.captures(&resp).unwrap().unwrap();
         let hy_player_config = cap.name("cfg").unwrap().as_str();
-        info!("{hy_player_config}");
+        debug!("{hy_player_config}");
         let re = fancy_regex::Regex::new(r#""stream": "(?P<stream>.*?)""#)?;
         let cap = re.captures(hy_player_config).unwrap().unwrap();
         let stream = cap.name("stream").unwrap().as_str();
         let stream = base64::decode(stream).unwrap();
         let stream = serde_json::from_slice::<HuyaResp>(&stream)?;
-        info!("{stream:?}");
+        debug!("{stream:?}");
         let mut result = Vec::new();
         for data in stream.data {
-            info!("{:?}", data.game_stream_info_list);
+            debug!("{:?}", data.game_stream_info_list);
             for info in data.game_stream_info_list {
                 let url = format!(
                     "{}/{}.flv{}",
-                    info.s_flv_url, info.s_stream_name, 
-					html_escape::decode_html_entities(&info.s_flv_anti_code).to_string()
+                    info.s_flv_url,
+                    info.s_stream_name,
+                    html_escape::decode_html_entities(&info.s_flv_anti_code)
                 );
                 result.push(url);
             }
@@ -71,6 +72,9 @@ mod tests {
     fn test_huya() {
         let url = "https://www.huya.com/lck";
         let room = StreamRoom::new(url);
-        room.get_stream_url().expect("");
+        let surl = room.get_stream_url().expect("");
+        for i in surl {
+            println!("{i}");
+        }
     }
 }
