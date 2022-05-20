@@ -8,7 +8,7 @@ pub enum Plantform {
     Douyu,
 }
 
-pub fn get_stream_room(plantform: Plantform, roomid: i32) -> impl GetUrl {
+pub fn get_stream_room(plantform: Plantform, roomid: i64) -> impl GetUrl {
     match plantform {
         Plantform::Bilibili => {
             api::bilibili::req::StreamRoom::new(roomid, api::bilibili::model::QNData::QSource)

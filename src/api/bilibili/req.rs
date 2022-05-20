@@ -1,17 +1,16 @@
-
-use anyhow::Result;
 use crate::api::GetUrl;
+use anyhow::Result;
 
 use super::model::{PlayUrlResp, QNData};
 use log::error;
 pub struct StreamRoom {
-    pub cid: i32,
+    pub cid: i64,
     api_url: String,
     pub qn_data: QNData,
 }
 
 impl StreamRoom {
-    pub fn new(cid: i32, qn_data: QNData) -> Self {
+    pub fn new(cid: i64, qn_data: QNData) -> Self {
         Self {
             cid,
             api_url: "https://api.live.bilibili.com/room/v1/Room/playUrl".to_string(),
@@ -28,7 +27,7 @@ impl GetUrl for StreamRoom {
             .get(&self.api_url)
             .query(&[
                 ("cid", self.cid.to_string().as_str()),
-                ("qn", (self.qn_data as i32).to_string().as_str()),
+                ("qn", (self.qn_data as i64).to_string().as_str()),
                 ("plantform", "web"),
             ])
             .send()?

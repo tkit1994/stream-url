@@ -1,13 +1,11 @@
-use std::{
-    time::{SystemTime, UNIX_EPOCH},
-};
 use anyhow::Result;
 use log::debug;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::api::GetUrl;
 
 pub struct StreamRoom {
-    pub roomd_id: i32,
+    pub roomd_id: i64,
     api_url: String,
     did: String,
     ts: String,
@@ -15,7 +13,7 @@ pub struct StreamRoom {
 }
 
 impl StreamRoom {
-    pub fn new(roomd_id: i32) -> Self {
+    pub fn new(roomd_id: i64) -> Self {
         let ts = SystemTime::now().duration_since(UNIX_EPOCH).expect("");
         let cdns = vec![
             "vplay1a.douyucdn.cn".to_string(),

@@ -1,7 +1,7 @@
-use log::{debug};
-use reqwest::header::{HeaderMap, ACCEPT, REFERER, USER_AGENT};
-use anyhow::Result;
 use crate::api::{huya::model::HuyaResp, GetUrl};
+use anyhow::Result;
+use log::debug;
+use reqwest::header::{HeaderMap, ACCEPT, REFERER, USER_AGENT};
 
 pub struct StreamRoom {
     pub url: String,
@@ -57,9 +57,6 @@ impl GetUrl for StreamRoom {
                 );
                 result.push(url);
             }
-        }
-        for i in &result {
-            println!("{i}");
         }
         Ok(result)
     }
