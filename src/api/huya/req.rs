@@ -36,11 +36,11 @@ impl GetUrl for StreamRoom {
         let resp = client.get(&self.url).headers(headers).send()?.text()?;
         let resp = html_escape::decode_html_entities(&resp).to_string();
         let re = fancy_regex::Regex::new(r"(?ms)hyPlayerConfig = (?P<cfg>{.*?});")?;
-        let cap = re.captures(&resp).unwrap().unwrap();
+        let cap = re.captures(&resp)?.unwrap();
         let hy_player_config = cap.name("cfg").unwrap().as_str();
         debug!("{hy_player_config}");
         let re = fancy_regex::Regex::new(r#""stream": "(?P<stream>.*?)""#)?;
-        let cap = re.captures(hy_player_config).unwrap().unwrap();
+        let cap = re.captures(hy_player_config)?.unwrap();
         let stream = cap.name("stream").unwrap().as_str();
         let stream = base64::decode(stream).unwrap();
         let stream = serde_json::from_slice::<HuyaResp>(&stream)?;

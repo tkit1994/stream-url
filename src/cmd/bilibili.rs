@@ -2,7 +2,6 @@ use anyhow::Result;
 use clap::{ArgGroup, Args};
 use stream_url::api::bilibili::{self, model::QNData};
 
-
 use super::get_url;
 #[derive(Debug, Args)]
 #[clap(group(
