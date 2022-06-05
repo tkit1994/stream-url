@@ -9,8 +9,8 @@ use super::get_url;
                 .required(true)
         ))]
 pub struct DouyuArgs {
-    #[clap(short, long, group = "id")]
-    url: Option<String>,
+    // #[clap(short, long, group = "id")]
+    // url: Option<String>,
     #[clap(short, long, group = "id")]
     room_id: Option<i64>,
     #[clap(short, long)]

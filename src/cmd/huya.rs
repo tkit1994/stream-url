@@ -11,8 +11,8 @@ pub struct HuyaArgs {
     #[clap(short, long, group = "id")]
     url: Option<String>,
     #[clap(short, long, group = "id")]
-    room_id: Option<i64>,
-    #[clap(short, long)]
+    // room_id: Option<i64>,
+    // #[clap(short, long)]
     all: bool,
 }
 

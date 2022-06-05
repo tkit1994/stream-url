@@ -9,8 +9,8 @@ use super::get_url;
                 .required(true)
         ))]
 pub struct BilibiliArgs {
-    #[clap(short, long, group = "id")]
-    url: Option<String>,
+    // #[clap(short, long, group = "id")]
+    // url: Option<String>,
     #[clap(short, long, group = "id")]
     room_id: Option<i64>,
     #[clap(short, long, arg_enum, default_value_t=QNData::QSource)]

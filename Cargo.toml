@@ -21,3 +21,7 @@ serde_json = "1.0.81"
 serde_urlencoded = "0.7.1"
 
 [features]
+
+
+[profile.release]
+strip = true
