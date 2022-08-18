@@ -18,6 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: rust-toolchain
+      uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         target: aarch64-unknown-linux-gnu
