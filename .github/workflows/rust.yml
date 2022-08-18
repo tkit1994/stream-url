@@ -10,22 +10,26 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        target: 
+          - "aarch64-unknown-linux-gnu"
+          - "x86_64-pc-windows-gnu"
+          - "x86_64-unknown-linux-gnu"
     steps:
     - uses: actions/checkout@v3
-    - name: rust-toolchain
+    
+    - name: setup rust-toolchain
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        target: aarch64-unknown-linux-gnu
+        target: ${{matrix.target}}
         profile: minimal
         default: true
         
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      run: cargo build -r --verbose
