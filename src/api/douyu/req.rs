@@ -15,13 +15,7 @@ pub struct StreamRoom {
 impl StreamRoom {
     pub fn new(roomd_id: i64) -> Self {
         let ts = SystemTime::now().duration_since(UNIX_EPOCH).expect("");
-        let cdns = vec![
-            "vplay1a.douyucdn.cn".to_string(),
-            "vplay3a.douyucdn.cn".to_string(),
-            "hls3-akm.douyucdn.cn".to_string(),
-            "hlsa-akm.douyucdn.cn".to_string(),
-            "hls1a-akm.douyucdn.cn".to_string(),
-        ];
+        let cdns = vec!["akm-ctc.douyucdn.cn".to_string()];
         Self {
             roomd_id,
             api_url: "https://m.douyu.com/api/room/ratestream".to_string(),
