@@ -39,21 +39,18 @@ impl GetUrl for StreamRoom {
         let cap = re.captures(&resp)?.unwrap();
         let hy_player_config = cap.name("cfg").unwrap().as_str();
         debug!("{hy_player_config}");
-        let re = fancy_regex::Regex::new(r#""stream": "(?P<stream>.*?)""#)?;
+        let re = fancy_regex::Regex::new(r#"stream: (?P<stream>.*)"#)?;
         let cap = re.captures(hy_player_config)?.unwrap();
         let stream = cap.name("stream").unwrap().as_str();
-        let stream = base64::decode(stream).unwrap();
-        let stream = serde_json::from_slice::<HuyaResp>(&stream)?;
+        let stream = serde_json::from_str::<HuyaResp>(stream)?;
         debug!("{stream:?}");
         let mut result = Vec::new();
         for data in stream.data {
             debug!("{:?}", data.game_stream_info_list);
             for info in data.game_stream_info_list {
                 let url = format!(
-                    "{}/{}.flv{}",
-                    info.s_flv_url,
-                    info.s_stream_name,
-                    html_escape::decode_html_entities(&info.s_flv_anti_code)
+                    "{}/{}.flv?{}",
+                    info.s_flv_url, info.s_stream_name, info.s_flv_anti_code
                 );
                 result.push(url);
             }
@@ -67,6 +64,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_huya() {
+        env_logger::init();
         let url = "https://www.huya.com/lck";
         let room = StreamRoom::new(url);
         let surl = room.get_stream_url().expect("");
