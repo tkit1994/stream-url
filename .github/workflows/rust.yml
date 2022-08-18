@@ -2,34 +2,39 @@ name: Rust
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
-
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: 
+        target:
           - "aarch64-unknown-linux-gnu"
           - "x86_64-pc-windows-gnu"
           - "x86_64-unknown-linux-gnu"
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: setup rust-toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        target: ${{matrix.target}}
-        profile: minimal
-        default: true
-        
-    - name: Build
-      run: cargo build -r --verbose
+      - uses: actions/checkout@v3
+
+      - name: setup rust-toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{matrix.target}}
+          profile: minimal
+          default: true
+
+      - name: Build
+        run: cargo build -r --verbose
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: stream-url ${{matrix.target}}
+          path: target/release/stream-url
