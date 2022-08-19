@@ -3,7 +3,7 @@ name: Rust
 on:
   push:
     branches: ["master", "test"]
-    tags: [ 'v*' ]
+    tags: ["v*"]
   pull_request:
     branches: ["master"]
   workflow_dispatch:
@@ -40,28 +40,33 @@ jobs:
           profile: minimal
           default: true
 
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{matrix.target}}
+          key: ${{ hashFiles('**/Cargo.lock') }}
+
       - name: Build
         run: cargo build -r --target ${{matrix.target}}
-      
+
       - name: Upload artifacts for linux
         uses: actions/upload-artifact@v3
         if: matrix.os == 'ubuntu-latest'
         with:
           name: stream-url-${{matrix.target}}
           path: target/${{matrix.target}}/release/stream-url
-      
+
       - name: Upload artifacts for windows
         uses: actions/upload-artifact@v3
         if: matrix.os == 'windows-latest'
         with:
           name: stream-url-${{matrix.target}}
           path: target/${{matrix.target}}/release/stream-url.exe
-      
+
       - name: Get tag
         if: "startsWith(github.ref, 'refs/tags/')"
         id: tag
         uses: dawidd6/action-get-tag@v1
-      
+
       - name: Archive binary for windows
         if: "startsWith(github.ref, 'refs/tags/') && matrix.os == 'windows-latest'"
         run: |
