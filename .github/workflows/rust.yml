@@ -43,6 +43,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: ${{matrix.target}}
+          key: ${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
         run: cargo build -r --target ${{matrix.target}}
