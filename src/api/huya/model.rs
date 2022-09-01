@@ -12,6 +12,7 @@
 // }
 
 use serde::{Deserialize, Serialize};
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HuyaResp {
     pub data: Vec<Datum>,
@@ -91,7 +92,7 @@ pub struct GameLiveInfo {
     #[serde(rename = "profileRoom")]
     pub profile_room: i64,
     #[serde(rename = "liveId")]
-    pub live_id: f64,
+    pub live_id: String,
     #[serde(rename = "recommendTagName")]
     pub recommend_tag_name: String,
     #[serde(rename = "contentIntro")]
@@ -153,7 +154,7 @@ pub struct GameStreamInfoList {
     #[serde(rename = "mpExtArgs")]
     pub mp_ext_args: MpExtArgs,
     #[serde(rename = "lTimespan")]
-    pub l_timespan: i64,
+    pub l_timespan: String,
     #[serde(rename = "_classname")]
     pub classname: String,
 }
