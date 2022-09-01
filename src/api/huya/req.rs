@@ -61,10 +61,12 @@ impl GetUrl for StreamRoom {
 
 #[cfg(test)]
 mod tests {
+    use env_logger::Env;
+
     use super::*;
     #[test]
     fn test_huya() {
-        env_logger::init();
+        env_logger::Builder::from_env(Env::default().default_filter_or("DEBUG")).init();
         let url = "https://www.huya.com/lck";
         let room = StreamRoom::new(url);
         let surl = room.get_stream_url().expect("");
