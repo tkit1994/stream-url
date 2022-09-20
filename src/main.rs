@@ -12,6 +12,8 @@ fn main() -> Result<()> {
         Commands::Huya(args) => cmd::huya::execute(args)?,
 
         Commands::Douyu(args) => cmd::douyu::execute(args)?,
+        
+        Commands::Douyin(args) => cmd::douyin::execute(args)?,
     }
     Ok(())
 }
