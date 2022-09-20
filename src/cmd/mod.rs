@@ -1,9 +1,10 @@
 use clap::{Parser, Subcommand};
-use stream_url::api::GetUrl;
+use stream_url::api::{GetUrl};
 
 pub mod bilibili;
 pub mod douyu;
 pub mod huya;
+pub mod douyin;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about, long_about = "A tool to get stream urls")]
@@ -21,6 +22,8 @@ pub enum Commands {
     Douyu(douyu::DouyuArgs),
     /// Huya
     Huya(huya::HuyaArgs),
+    /// Douyin
+    Douyin(douyin::DouyinArgs)
 }
 
 pub fn get_url(room: impl GetUrl, all: bool) -> anyhow::Result<()> {
