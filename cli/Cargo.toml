@@ -8,9 +8,9 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.68"
 clap = { version = "4.0.32", features = ["derive"] }
-reqwest = { version = "0.11.13", default-features = false }
+reqwest = { version = "0.11.13", default-features = false, features = [
+	"rustls-tls",
+] }
 tokio = { version = "1.23.0", features = ["full"] }
-backend = { path = "../backend" }
-
-[features]
-rustls = ["reqwest/rustls-tls"]
+backend = { path = "../backend", default-features = false }
+openssl = { version = "0.10.45", optional = true }
