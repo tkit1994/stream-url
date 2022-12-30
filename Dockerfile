@@ -1,10 +1,7 @@
-FROM rust:latest AS BUILDER
-WORKDIR /app/
-COPY ./ ./
-RUN cargo build -r -p server
-
 FROM debian:stable-slim
+ARG TARGETARCH
+ARG TARGETVARIANT
 WORKDIR /opt/stream-url
-COPY --from=BUILDER /app/target/release/server .
+COPY --chmod=0755 ${TARGETARCH}${TARGETVARIANT}/server server
 EXPOSE 80
-ENTRYPOINT [ "./server" ]
+CMD [ "./server" ]
