@@ -25,13 +25,14 @@ impl<T: GetUrls + Sync> GetUrl for T {
 }
 mod bilibili;
 
+mod douyin;
 mod douyu;
 mod huya;
-
 pub enum StreamRoom {
     Douyu(douyu::StreamRoom),
     Huya(huya::StreamRoom),
     Bilibili(bilibili::StreamRoom),
+    Douyin(douyin::StreamRoom),
     UnknownPlantform,
 }
 
@@ -50,6 +51,10 @@ impl StreamRoom {
                 let room = bilibili::StreamRoom::new(room_id, client, 10000);
                 StreamRoom::Bilibili(room)
             }
+            "douyin" => {
+                let room = douyin::StreamRoom::new(room_id, client);
+                StreamRoom::Douyin(room)
+            }
             _ => StreamRoom::UnknownPlantform,
         }
     }
@@ -61,7 +66,8 @@ impl GetUrls for StreamRoom {
             StreamRoom::Douyu(room) => room.get_urls().await,
             StreamRoom::Huya(room) => room.get_urls().await,
             StreamRoom::Bilibili(room) => room.get_urls().await,
-            StreamRoom::UnknownPlantform => bail!("UnknownPlantform"),
+            StreamRoom::Douyin(room) => room.get_urls().await,
+            _ => bail!("UnknownPlantform"),
         }
     }
 }

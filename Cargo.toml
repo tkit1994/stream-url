@@ -1,9 +1,9 @@
 [workspace]
 members = ["backend", "cli", "server"]
 
-[profile.release]
-strip = true
-lto = true
-opt-level = "z"
-panic = "abort"
+# [profile.release]
+# strip = true
+# lto = true
+# opt-level = "z"
+# panic = "abort"
 
