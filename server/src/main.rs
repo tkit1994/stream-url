@@ -1,5 +1,6 @@
 use axum::{
-    extract::{Query, State},
+    extract::{Json, Path, Query, State},
+    response::Redirect,
     routing::get,
 };
 
@@ -15,39 +16,46 @@ struct Args {
     addr: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 struct StreamRoomQuery {
-    plantform: Plantform,
+    plantform: String,
     room_id: u64,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
-#[serde(rename_all = "snake_case")]
-enum Plantform {
-    Douyu,
-    Bilibili,
-    Huya,
-}
-
-async fn get_url(
-    Query(StreamRoomQuery { plantform, room_id }): Query<StreamRoomQuery>,
+async fn post_url(
     State(client): State<reqwest::Client>,
+    Json(StreamRoomQuery { plantform, room_id }): Json<StreamRoomQuery>,
 ) -> String {
-    let stream_room: Box<dyn GetUrl + Send + Sync> = match plantform {
-        Plantform::Douyu => Box::new(backend::douyu::StreamRoom::new(room_id, client)),
-        Plantform::Bilibili => Box::new(backend::bilibili::StreamRoom::new(room_id, client, 10000)),
-        Plantform::Huya => Box::new(backend::huya::StreamRoom::new(room_id, client)),
-    };
+    let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
     let url = stream_room.get_url().await.unwrap();
     url
 }
+async fn get_url(
+    State(client): State<reqwest::Client>,
+    Query(StreamRoomQuery { plantform, room_id }): Query<StreamRoomQuery>,
+) -> String {
+    let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
+    let url = stream_room.get_url().await.unwrap();
+    url
+}
+
+async fn redirect_url(
+    State(client): State<reqwest::Client>,
+    Path((plantform, room_id)): Path<(String, u64)>,
+) -> Redirect {
+    let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
+    let url = stream_room.get_url().await.unwrap();
+    Redirect::permanent(url.as_str())
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let client = reqwest::Client::builder().build()?;
     let app = axum::Router::new()
         .route("/", get(|| async { "hello from index" }))
-        .route("/api/v1/stream/url", get(get_url))
+        .route("/api/v1/stream/url", get(get_url).post(post_url))
+        .route("/api/v1/stream/:plantform/:room_id", get(redirect_url))
         .with_state(client);
     let addr = format!("{}:{}", args.addr, args.port).parse()?;
     axum::Server::bind(&addr)
