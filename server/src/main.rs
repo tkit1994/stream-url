@@ -6,8 +6,9 @@ use axum::{
 
 use backend::GetUrl;
 use clap::Parser;
+use error::AppError;
 use serde::{Deserialize, Serialize};
-
+mod error;
 #[derive(Debug, Parser)]
 struct Args {
     #[arg(short, long, default_value = "80")]
@@ -25,27 +26,28 @@ struct StreamRoomQuery {
 async fn post_url(
     State(client): State<reqwest::Client>,
     Json(StreamRoomQuery { plantform, room_id }): Json<StreamRoomQuery>,
-) -> String {
+) -> Result<String, AppError> {
     let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
-    let url = stream_room.get_url().await.unwrap();
-    url
+    let url = stream_room.get_url().await?;
+    Ok(url)
 }
+
 async fn get_url(
     State(client): State<reqwest::Client>,
     Query(StreamRoomQuery { plantform, room_id }): Query<StreamRoomQuery>,
-) -> String {
+) -> Result<String, AppError> {
     let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
-    let url = stream_room.get_url().await.unwrap();
-    url
+    let url = stream_room.get_url().await?;
+    Ok(url)
 }
 
 async fn redirect_url(
     State(client): State<reqwest::Client>,
     Path((plantform, room_id)): Path<(String, u64)>,
-) -> Redirect {
+) -> Result<Redirect, AppError> {
     let stream_room = backend::StreamRoom::new(plantform.as_str(), room_id, client);
-    let url = stream_room.get_url().await.unwrap();
-    Redirect::permanent(url.as_str())
+    let url = stream_room.get_url().await?;
+    Ok(Redirect::permanent(url.as_str()))
 }
 
 #[tokio::main]

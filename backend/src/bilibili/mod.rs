@@ -1,3 +1,4 @@
+use anyhow::Context;
 use async_trait::async_trait;
 use serde_json::json;
 
@@ -40,7 +41,7 @@ impl GetUrls for StreamRoom {
             .await?;
         let urls = res["data"]["durl"]
             .as_array()
-            .expect("No durl")
+            .context(res.to_string())?
             .iter()
             .flat_map(|f| f["url"].as_str().map(|f| f.to_owned()))
             .collect::<Vec<_>>();

@@ -1,3 +1,4 @@
+use anyhow::Context;
 use async_trait::async_trait;
 use regex::Regex;
 use reqwest::header::{HeaderValue, USER_AGENT};
@@ -23,7 +24,7 @@ impl GetUrls for StreamRoom {
 		.header(USER_AGENT, HeaderValue::from_str("Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36").unwrap())
 		.send().await?.text().await?;
         let re = Regex::new(r#"liveLineUrl":[\s\S]*?"(?P<url>.+?)""#)?;
-        let cap = re.captures(&res).expect("no captures for liveLineUrl");
+        let cap = re.captures(&res).context("no captures for liveLineUrl")?;
         let url = &cap["url"];
         let url = base64::decode(url)?;
         let url = String::from_utf8(url)?;
