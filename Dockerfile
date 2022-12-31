@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM alpine:latest
 ARG TARGETARCH
 ARG TARGETVARIANT
 WORKDIR /opt/stream-url

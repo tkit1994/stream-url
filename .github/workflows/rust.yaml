@@ -15,6 +15,13 @@ jobs:
           - aarch64-unknown-linux-gnu
           - x86_64-unknown-linux-gnu
           - x86_64-pc-windows-gnu
+          - armv7-unknown-linux-gnueabihf
+          - arm-unknown-linux-gnueabihf
+          - aarch64-unknown-linux-musl
+          - x86_64-unknown-linux-musl
+          - armv7-unknown-linux-musleabihf
+          - arm-unknown-linux-musleabihf
+
       fail-fast: true
     steps:
       - uses: actions/checkout@main
@@ -32,37 +39,12 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: stream-url-${{matrix.target}}
+          name: ${{matrix.target}}
           path: |
             target/${{matrix.target}}/release/server
             target/${{matrix.target}}/release/server.exe
             target/${{matrix.target}}/release/cli
             target/${{matrix.target}}/release/cli.exe
-
-      - name: Get tag
-        if: "startsWith(github.ref, 'refs/tags/')"
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-
-      - name: Create Archive file for windows
-        if: startsWith(github.ref, 'refs/tags/') && matrix.target == 'x86_64-pc-windows-gnu'
-        run: |
-          cd target/${{matrix.target}}/release
-          tar czvf stream-url-${{ steps.tag.outputs.tag }}.${{ matrix.target }}.tar.gz server.exe cli.exe
-
-      - name: Create Archive file for linux
-        if: startsWith(github.ref, 'refs/tags/') && matrix.target != 'x86_64-pc-windows-gnu'
-        run: |
-          cd target/${{matrix.target}}/release
-          tar czvf stream-url-${{ steps.tag.outputs.tag }}.${{ matrix.target }}.tar.gz server cli
-
-      - name: Upload package to GitHub Release
-        uses: softprops/action-gh-release@v1
-        if: "startsWith(github.ref, 'refs/tags/')"
-        with:
-          files: target/${{matrix.target}}/release/*.tar.gz
-          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
-          generate_release_notes: true
 
   docker:
     runs-on: ubuntu-latest
@@ -71,15 +53,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@main
+
       - uses: actions/download-artifact@v3
         with:
-          name: stream-url-aarch64-unknown-linux-gnu
+          name: aarch64-unknown-linux-musl
           path: arm64
 
       - uses: actions/download-artifact@v3
         with:
-          name: stream-url-x86_64-unknown-linux-gnu
+          name: x86_64-unknown-linux-musl
           path: amd64
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: armv7-unknown-linux-musleabihf
+          path: armv7
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: arm-unknown-linux-musleabihf
+          path: armv6
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -101,4 +94,41 @@ jobs:
           platforms: |
             linux/arm64
             linux/amd64
+            linux/arm/v7
+            linux/arm/v6
           tags: tkit1994/stream-url:latest
+
+  release:
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs:
+      - build
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+
+      - name: Dowload release files
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Archive release files
+        run: |
+          cd artifacts
+          for dirname in *; do
+            cd ${dirname}
+            tar czvf stream-url-${{ steps.tag.outputs.tag }}.${dirname}.tar.gz *
+            cd ..
+          done
+          find . -name '*.tar.gz' | xargs -i mv {} ${GITHUB_WORKSPACE}
+
+      - name: Upload package to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "*.tar.gz"
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+          generate_release_notes: true
