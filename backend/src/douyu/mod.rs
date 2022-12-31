@@ -1,5 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use anyhow::Context;
 use async_trait::async_trait;
 use regex::Regex;
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -52,9 +53,9 @@ impl GetUrls for StreamRoom {
             .await?
             .json::<serde_json::Value>()
             .await?;
-        let urls = res["data"]["rtmp_live"].as_str().expect("no urls");
+        let urls = res["data"]["rtmp_live"].as_str().context("no urls")?;
         let re = Regex::new(r"(?P<key>\d{1,8}[0-9a-zA-Z]+)_?\d{0,4}(.m3u8|/playlist)")?;
-        let cap = re.captures(urls).expect("no caps for key");
+        let cap = re.captures(urls).context("no caps for key")?;
         let key = &cap["key"];
         let res = self
             .cdns
