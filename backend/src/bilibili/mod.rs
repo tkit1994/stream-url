@@ -29,7 +29,7 @@ impl GetUrls for StreamRoom {
         let query = json!({
             "cid": self.room_id,
             "qn": self.qn_data,
-            "plantform": "web"
+            "platform": "web"
         });
         let res = self
             .client

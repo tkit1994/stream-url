@@ -33,12 +33,12 @@ pub enum StreamRoom {
     Huya(huya::StreamRoom),
     Bilibili(bilibili::StreamRoom),
     Douyin(douyin::StreamRoom),
-    UnknownPlantform,
+    Unknownplatform,
 }
 
 impl StreamRoom {
-    pub fn new(plantform: &str, room_id: u64, client: reqwest::Client) -> StreamRoom {
-        match plantform.to_lowercase().as_str() {
+    pub fn new(platform: &str, room_id: u64, client: reqwest::Client) -> StreamRoom {
+        match platform.to_lowercase().as_str() {
             "douyu" => {
                 let room = douyu::StreamRoom::new(room_id, client);
                 StreamRoom::Douyu(room)
@@ -55,7 +55,7 @@ impl StreamRoom {
                 let room = douyin::StreamRoom::new(room_id, client);
                 StreamRoom::Douyin(room)
             }
-            _ => StreamRoom::UnknownPlantform,
+            _ => StreamRoom::Unknownplatform,
         }
     }
 }
@@ -67,7 +67,7 @@ impl GetUrls for StreamRoom {
             StreamRoom::Huya(room) => room.get_urls().await,
             StreamRoom::Bilibili(room) => room.get_urls().await,
             StreamRoom::Douyin(room) => room.get_urls().await,
-            _ => bail!("UnknownPlantform"),
+            _ => bail!("Unknownplatform"),
         }
     }
 }

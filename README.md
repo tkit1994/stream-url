@@ -2,11 +2,12 @@
 
 A command line tool to get stream urls written in rust.
 
-## Supported stream plantforms
+## Supported stream platforms
 
 * douyu
 * huya
 * bilibili
+* douyin
 
 ## Inspired by
 
