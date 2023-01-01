@@ -47,7 +47,7 @@ async fn redirect_url(
 ) -> Result<Redirect, AppError> {
     let stream_room = backend::StreamRoom::new(platform.as_str(), room_id, client);
     let url = stream_room.get_url().await?;
-    Ok(Redirect::permanent(url.as_str()))
+    Ok(Redirect::temporary(url.as_str()))
 }
 
 #[tokio::main]
