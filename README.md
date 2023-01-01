@@ -1,4 +1,4 @@
-# stream-url [![Rust](https://github.com/tkit1994/stream-url/actions/workflows/rust.yml/badge.svg)](https://github.com/tkit1994/stream-url/actions/workflows/rust.yml)
+# stream-url [![CI](https://github.com/tkit1994/stream-url/actions/workflows/rust.yaml/badge.svg)](https://github.com/tkit1994/stream-url/actions/workflows/rust.yaml)
 
 A command line tool to get stream urls written in rust.
 

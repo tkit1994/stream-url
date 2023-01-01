@@ -86,6 +86,25 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            tkit1994/stream-url
+            ghcr.io/tkit1994/stream-url
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+
       - name: docker build
         uses: docker/build-push-action@master
         with:
@@ -96,7 +115,8 @@ jobs:
             linux/amd64
             linux/arm/v7
             linux/arm/v6
-          tags: tkit1994/stream-url:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   release:
     runs-on: ubuntu-latest
