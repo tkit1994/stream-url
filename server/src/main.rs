@@ -20,14 +20,14 @@ struct Args {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 struct StreamRoomQuery {
     platform: String,
-    room_id: u64,
+    room_id: String,
 }
 
 async fn post_url(
     State(client): State<reqwest::Client>,
     Json(StreamRoomQuery { platform, room_id }): Json<StreamRoomQuery>,
 ) -> Result<String, AppError> {
-    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id, client);
+    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id.as_str(), client);
     let url = stream_room.get_url().await?;
     Ok(url)
 }
@@ -36,16 +36,16 @@ async fn get_url(
     State(client): State<reqwest::Client>,
     Query(StreamRoomQuery { platform, room_id }): Query<StreamRoomQuery>,
 ) -> Result<String, AppError> {
-    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id, client);
+    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id.as_str(), client);
     let url = stream_room.get_url().await?;
     Ok(url)
 }
 
 async fn redirect_url(
     State(client): State<reqwest::Client>,
-    Path((platform, room_id)): Path<(String, u64)>,
+    Path((platform, room_id)): Path<(String, String)>,
 ) -> Result<Redirect, AppError> {
-    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id, client);
+    let stream_room = backend::StreamRoom::new(platform.as_str(), room_id.as_str(), client);
     let url = stream_room.get_url().await?;
     Ok(Redirect::temporary(url.as_str()))
 }

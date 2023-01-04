@@ -8,6 +8,7 @@ A command line tool to get stream urls written in rust.
 * huya
 * bilibili
 * douyin
+* twitch
 
 ## Inspired by
 
