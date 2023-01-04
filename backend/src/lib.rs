@@ -28,11 +28,14 @@ mod bilibili;
 mod douyin;
 mod douyu;
 mod huya;
+mod twitch;
+
 pub enum StreamRoom {
     Douyu(douyu::StreamRoom),
     Huya(huya::StreamRoom),
     Bilibili(bilibili::StreamRoom),
     Douyin(douyin::StreamRoom),
+    Twitch(twitch::StreamRoom),
     Unknownplatform,
 }
 
