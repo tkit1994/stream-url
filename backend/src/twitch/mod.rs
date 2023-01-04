@@ -26,11 +26,8 @@ impl StreamRoom {
         let client_id = cap["client_id"].to_string();
         Ok(client_id)
     }
-}
 
-#[async_trait]
-impl GetUrls for StreamRoom {
-    async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
+    async fn sign_token(&self) -> anyhow::Result<(String, String)> {
         let client_id = self.get_client_id().await?;
         let query = r#"
         query PlaybackAccessToken_Template(
@@ -93,6 +90,14 @@ impl GetUrls for StreamRoom {
         let signature = res["data"]["streamPlaybackAccessToken"]["signature"]
             .as_str()
             .context(res.to_string())?;
+        Ok((token.to_owned(), signature.to_owned()))
+    }
+}
+
+#[async_trait]
+impl GetUrls for StreamRoom {
+    async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
+        let (token, signature) = self.sign_token().await?;
         let params = json!({
                     "allow_source": "true",
                     "dt": 2,
@@ -107,7 +112,6 @@ impl GetUrls for StreamRoom {
                     "player_version": "1.4.0",
         });
         let params = serde_urlencoded::to_string(params)?;
-        // let params = serde_json::to_string_pretty(&token)?;
         let url = format!(
             "https://usher.ttvnw.net/api/channel/hls/{}.m3u8?{}",
             self.room_id, params
