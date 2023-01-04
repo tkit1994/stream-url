@@ -48,7 +48,6 @@ impl StreamRoom {
                 StreamRoom::Douyu(room)
             }
             "huya" => {
-                let room_id = room_id.parse().unwrap();
                 let room = huya::StreamRoom::new(room_id, client);
                 StreamRoom::Huya(room)
             }

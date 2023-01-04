@@ -6,13 +6,16 @@ use reqwest::header::{HeaderValue, USER_AGENT};
 use crate::GetUrls;
 
 pub struct StreamRoom {
-    room_id: u64,
+    room_id: String,
     client: reqwest::Client,
 }
 
 impl StreamRoom {
-    pub fn new(room_id: u64, client: reqwest::Client) -> Self {
-        Self { room_id, client }
+    pub fn new(room_id: &str, client: reqwest::Client) -> Self {
+        Self {
+            room_id: room_id.to_owned(),
+            client,
+        }
     }
 }
 
@@ -45,7 +48,7 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn test() -> anyhow::Result<()> {
-        let room_id = 213517;
+        let room_id = "213517";
         let client = reqwest::Client::builder().build()?;
         let s = StreamRoom::new(room_id, client);
         let u = s.get_url().await?;
