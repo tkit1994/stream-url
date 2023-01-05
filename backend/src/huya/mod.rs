@@ -1,7 +1,6 @@
-use anyhow::Context;
+use anyhow::{bail, Context};
 use async_trait::async_trait;
 use regex::Regex;
-use reqwest::header::{HeaderValue, USER_AGENT};
 
 use crate::GetUrls;
 
@@ -22,21 +21,37 @@ impl StreamRoom {
 #[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
-        let room_url = format!("https://m.huya.com/{}", self.room_id);
-        let res = self.client.get(room_url)
-		.header(USER_AGENT, HeaderValue::from_str("Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Mobile Safari/537.36").unwrap())
-		.send().await?.text().await?;
-        let re = Regex::new(r#"liveLineUrl":[\s\S]*?"(?P<url>.+?)""#)?;
-        let cap = re.captures(&res).context("no captures for liveLineUrl")?;
-        let url = &cap["url"];
-        let url = base64::decode(url)?;
-        let url = String::from_utf8(url)?;
-        let url = format!("https:{}", url);
-        let url = url
-            .replace("m3u8", "flv")
-            .replace("hls", "flv")
-            .replace("tars_mobile", "huya_live");
-        let urls = vec![url];
+        let room_url = format!("https://www.huya.com/{}", self.room_id);
+        let res = self.client.get(room_url).send().await?.text().await?;
+        let re = Regex::new(r#""isOn":(?P<is_on>(true|false))"#)?;
+        let is_on = re.captures(&res).context("isOn not found")?;
+        match &is_on["is_on"] {
+            "true" => {}
+            "false" => bail!("Streaming has not started"),
+            _ => bail!("Unknown error about is on"),
+        }
+        let re = Regex::new(r#"gameStreamInfoList":(?P<gameStreamInfoList>\[.*?}\])"#)?;
+        let cap = re
+            .captures(&res)
+            .context("no captures for gameStreamInfoList")?;
+        let info_list = &cap["gameStreamInfoList"];
+        // println!("{}", info_list);
+        let info_list = serde_json::from_str::<serde_json::Value>(info_list)?;
+        let urls = info_list
+            .as_array()
+            .context("no urls")?
+            .iter()
+            .map(|f| {
+                let s_flv_url = f["sFlvUrl"].as_str().unwrap().replace("http", "https");
+                let s_stream_name = f["sStreamName"].as_str().unwrap();
+                let s_flv_suffix = f["sFlvUrlSuffix"].as_str().unwrap();
+                let s_flv_anti_code = f["sFlvAntiCode"].as_str().unwrap();
+                format!(
+                    "{}/{}.{}?{}",
+                    s_flv_url, s_stream_name, s_flv_suffix, s_flv_anti_code
+                )
+            })
+            .collect::<Vec<_>>();
         Ok(urls)
     }
 }
@@ -48,7 +63,7 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn test() -> anyhow::Result<()> {
-        let room_id = "213517";
+        let room_id = "lck";
         let client = reqwest::Client::builder().build()?;
         let s = StreamRoom::new(room_id, client);
         let u = s.get_url().await?;
