@@ -18,17 +18,7 @@ impl StreamRoom {
         }
     }
 
-    async fn get_client_id(&self) -> anyhow::Result<String> {
-        let url = format!("https://www.twitch.tv/{}", self.room_id);
-        let res = self.client.get(url).send().await?.text().await?;
-        let re = Regex::new(r#"clientId="(?P<client_id>.*?)""#)?;
-        let cap = re.captures(res.as_str()).context("no client id")?;
-        let client_id = cap["client_id"].to_string();
-        Ok(client_id)
-    }
-
     async fn sign_token(&self) -> anyhow::Result<(String, String)> {
-        let client_id = self.get_client_id().await?;
         let query = r#"
         query PlaybackAccessToken_Template(
           $login: String!,
@@ -78,7 +68,7 @@ impl StreamRoom {
         let res = self
             .client
             .post("https://gql.twitch.tv/gql")
-            .header("Client-ID", client_id.as_str())
+            .header("Client-ID", "kimne78kx3ncx6brgo4mv6wki5h1ko")
             .json(&request_body)
             .send()
             .await?
@@ -116,7 +106,17 @@ impl GetUrls for StreamRoom {
             "https://usher.ttvnw.net/api/channel/hls/{}.m3u8?{}",
             self.room_id, params
         );
-        Ok(vec![url])
+        let m3u8 = self.client.get(url).send().await?.text().await?;
+        // println!("{}", m3u8);
+        let re = Regex::new(r"(?P<url>https?://.*)")?;
+        let urls = re
+            .captures_iter(m3u8.as_str())
+            .map(|f| f["url"].to_owned())
+            .collect::<Vec<_>>();
+        if urls.is_empty() {
+            anyhow::bail!(m3u8);
+        }
+        Ok(urls)
     }
 }
 #[cfg(test)]
@@ -126,11 +126,9 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn test() -> anyhow::Result<()> {
-        let room_id = "weiwei610";
+        let room_id = "velvet_7";
         let client = reqwest::Client::builder().build()?;
         let r = StreamRoom::new(room_id, client);
-        let client_id = r.get_client_id().await?;
-        println!("{}", client_id);
         let url = r.get_url().await?;
         println!("{}", url);
         Ok(())
