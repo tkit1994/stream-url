@@ -36,7 +36,7 @@ impl GetUrls for StreamRoom {
         let cap = re.captures(res.as_str()).context("no caps")?;
         let content = &cap["content"];
         let content = urlencoding::decode(content)?.to_string();
-        let re = Regex::new(r#""FULL_HD1":"(?P<url>https?://.+?\.(flv|m3u8).+?)""#)?;
+        let re = Regex::new(r#""FULL_HD1":"(?P<url>https?://.+?\.(flv|m3u8).*?)""#)?;
         let cap = re.captures(content.as_str()).context("no caps")?;
         let url = cap["url"].to_string();
         let res = vec![url];
