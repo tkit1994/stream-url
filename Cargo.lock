@@ -86,7 +86,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -182,7 +182,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "anyhow",
  "backend",
@@ -844,7 +844,7 @@ dependencies = [
 
 [[package]]
 name = "server"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "anyhow",
  "axum",
