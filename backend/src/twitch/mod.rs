@@ -19,51 +19,21 @@ impl StreamRoom {
     }
 
     async fn sign_token(&self) -> anyhow::Result<(String, String)> {
-        let query = r#"
-        query PlaybackAccessToken_Template(
-          $login: String!,
-          $isLive: Boolean!,
-          $vodID: ID!,
-          $isVod: Boolean!,
-          $playerType: String!
-        ) {
-          streamPlaybackAccessToken(
-            channelName: $login,
-            params: {
-              platform: "web",
-              playerBackend: "mediaplayer",
-              playerType: $playerType
-            }
-          ) @include(if: $isLive) {
-            value
-            signature
-            __typename
-          }
-          videoPlaybackAccessToken(
-            id: $vodID,
-            params: {
-              platform: "web",
-              playerBackend: "mediaplayer",
-              playerType: $playerType
-            }
-          ) @include(if: $isVod) {
-            value
-            signature
-            __typename
-          }
-        }"#;
-
-        let variables = json!({
-            "isLive": true,
-            "login": self.room_id.as_str(),
-            "isVod": false,
-            "vodID": "",
-            "playerType": "site",
-        });
-
         let request_body = json!({
-            "query": query,
-            "variables": variables,
+            "operationName": "PlaybackAccessToken",
+            "extensions": {
+                "persistedQuery": {
+                    "version": 1,
+                    "sha256Hash": "0828119ded1c13477966434e15800ff57ddacf13ba1911c129dc2200705b0712"
+                }
+            },
+            "variables": {
+                "isLive": true,
+                "login": self.room_id,
+                "isVod": false,
+                "vodID": "",
+                "playerType": "embed"
+            }
         });
         let res = self
             .client
@@ -89,17 +59,14 @@ impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let (token, signature) = self.sign_token().await?;
         let params = json!({
-                    "allow_source": "true",
-                    "dt": 2,
-                    "fast_bread": "true",
-                    "player_backend": "mediaplayer",
-                    "playlist_include_framerate": "true",
-                    "reassignments_supported": "true",
-                    "sig": signature,
-                    "supported_codecs": "vp09,avc1",
-                    "token": token,
-                    "cdm": "wv",
-                    "player_version": "1.4.0",
+            "sig": signature,
+            "token": token,
+            "player": "twitchweb",
+            "p": 123456,
+            "type": "any",
+            "allow_source": "true",
+            "allow_audio_only": "true",
+            "allow_spectre": "false",
         });
         let params = serde_urlencoded::to_string(params)?;
         let url = format!(
@@ -107,7 +74,6 @@ impl GetUrls for StreamRoom {
             self.room_id, params
         );
         let m3u8 = self.client.get(url).send().await?.text().await?;
-        // println!("{}", m3u8);
         let re = Regex::new(r"(?P<url>https?://.*)")?;
         let urls = re
             .captures_iter(m3u8.as_str())
@@ -126,7 +92,7 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn test() -> anyhow::Result<()> {
-        let room_id = "velvet_7";
+        let room_id = "weiwei610";
         let client = reqwest::Client::builder().build()?;
         let r = StreamRoom::new(room_id, client);
         let url = r.get_url().await?;
