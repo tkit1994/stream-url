@@ -8,6 +8,9 @@ use backend::{GetUrl, GetUrls};
 use clap::Parser;
 use error::AppError;
 use serde::{Deserialize, Serialize};
+use tower_http::trace::TraceLayer;
+use tracing::Level;
+
 mod error;
 #[derive(Debug, Parser)]
 struct Args {
@@ -15,6 +18,8 @@ struct Args {
     port: u32,
     #[arg(short, long, default_value = "0.0.0.0")]
     addr: String,
+    #[arg(short, long)]
+    debug: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -62,18 +67,25 @@ async fn redirect_url(
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
+    tracing_subscriber::fmt()
+        .with_max_level(if args.debug {
+            Level::DEBUG
+        } else {
+            Level::INFO
+        })
+        .init();
     let client = reqwest::Client::builder().build()?;
     let app = axum::Router::new()
         .route("/", get(|| async { "hello from index" }))
         .route("/api/v1/stream/url", get(get_url).post(post_url))
         .route("/api/v1/stream/all_urls", post(get_all_urls))
         .route("/api/v1/stream/:platform/:room_id", get(redirect_url))
+        .layer(TraceLayer::new_for_http())
         .with_state(client);
     let addr = format!("{}:{}", args.addr, args.port).parse()?;
+    tracing::info!("Listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await?;
-    println!("{:?}", args);
-
     Ok(())
 }
