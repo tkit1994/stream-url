@@ -12,7 +12,7 @@ env:
 
 jobs:
   lints:
-    name: Lints
+    name: lints
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -70,6 +70,7 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     needs:
       - build
       - lints
