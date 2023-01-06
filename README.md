@@ -14,3 +14,4 @@ A command line tool to get stream urls written in rust.
 
 * [wbt5/real-url](https://github.com/wbt5/real-url)
 * [qianjiachun/douyuExdouyuex](https://github.com/qianjiachun/douyuEx)
+* [streamlink/streamlink](https://github.com/streamlink/streamlink)
