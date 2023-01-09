@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.68"
-async-trait = "0.1.60"
+async-trait = "0.1.61"
 base64 = "0.21.0"
 md5 = "0.7.0"
 regex = "1.7.0"
