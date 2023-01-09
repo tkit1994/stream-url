@@ -1,0 +1,9 @@
+ pull_request_rules:
+  - name: automatic merge of bot 🤖 (low priority)
+    conditions:
+      - author=dependabot[bot]
+      - check-success=build (x86_64-unknown-linux-gnu)
+      - check-success=build (x86_64-pc-windows-gnu)
+      - base=master
+    actions:
+      method: rebase
