@@ -76,10 +76,13 @@ async fn main() -> anyhow::Result<()> {
         .init();
     let client = reqwest::Client::builder().build()?;
     let app = axum::Router::new()
-        .route("/", get(|| async { "hello from index" }))
-        .route("/api/v1/stream/url", get(get_url).post(post_url))
-        .route("/api/v1/stream/all_urls", post(get_all_urls))
-        .route("/api/v1/stream/:platform/:room_id", get(redirect_url))
+        .route(
+            "/health",
+            get(|| async { "hello from stream-url web server" }),
+        )
+        .route("/url", get(get_url).post(post_url))
+        .route("/all_urls", post(get_all_urls))
+        .route("/:platform/:room_id", get(redirect_url))
         .layer(TraceLayer::new_for_http())
         .with_state(client);
     let addr = format!("{}:{}", args.addr, args.port).parse()?;
