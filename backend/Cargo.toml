@@ -16,7 +16,7 @@ reqwest = { version = "0.11.14", default-features = false, features = [
 	"rustls-tls",
 ] }
 serde = { version = "1.0.152", features = ["derive"] }
-serde_json = "1.0.92"
+serde_json = "1.0.93"
 serde_urlencoded = "0.7.1"
 urlencoding = "2.1.2"
 
