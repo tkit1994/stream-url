@@ -57,7 +57,7 @@ mod tests {
         let room_id = 816599815264;
         let s = StreamRoom::new(room_id, client);
         let url = s.get_url().await?;
-        println!("{}", url);
+        println!("{url}");
         Ok(())
     }
 }

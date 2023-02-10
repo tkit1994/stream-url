@@ -92,7 +92,7 @@ mod tests {
         let room_id = "6556593";
         let room = StreamRoom::new("douyu", room_id, client);
         let url = room.get_url().await?;
-        println!("{}", url);
+        println!("{url}");
         Ok(())
     }
 }

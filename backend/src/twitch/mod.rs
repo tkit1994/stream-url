@@ -96,7 +96,7 @@ mod tests {
         let client = reqwest::Client::builder().build()?;
         let r = StreamRoom::new(room_id, client);
         let url = r.get_url().await?;
-        println!("{}", url);
+        println!("{url}");
         Ok(())
     }
 }

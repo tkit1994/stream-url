@@ -30,7 +30,7 @@ impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let ts = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
         let auth = md5::compute(format!("{}{}", self.room_id, ts));
-        let auth = format! {"{:x}", auth};
+        let auth = format! {"{auth:x}"};
 
         let body = json!({
             "rid": self.room_id,
@@ -60,7 +60,7 @@ impl GetUrls for StreamRoom {
         let res = self
             .cdns
             .iter()
-            .map(|cdn| format!("https://{}/live/{}.flv?uuid=", cdn, key))
+            .map(|cdn| format!("https://{cdn}/live/{key}.flv?uuid="))
             .collect::<Vec<_>>();
         Ok(res)
     }
@@ -78,7 +78,7 @@ mod tests {
         let room_id = 12313;
         let s = StreamRoom::new(room_id, client);
         let url = s.get_url().await?;
-        println!("{}", url);
+        println!("{url}");
         Ok(())
     }
 }

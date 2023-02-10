@@ -46,10 +46,7 @@ impl GetUrls for StreamRoom {
                 let s_stream_name = f["sStreamName"].as_str().unwrap();
                 let s_flv_suffix = f["sFlvUrlSuffix"].as_str().unwrap();
                 let s_flv_anti_code = f["sFlvAntiCode"].as_str().unwrap();
-                format!(
-                    "{}/{}.{}?{}",
-                    s_flv_url, s_stream_name, s_flv_suffix, s_flv_anti_code
-                )
+                format!("{s_flv_url}/{s_stream_name}.{s_flv_suffix}?{s_flv_anti_code}")
             })
             .collect::<Vec<_>>();
         Ok(urls)
@@ -67,7 +64,7 @@ mod tests {
         let client = reqwest::Client::builder().build()?;
         let s = StreamRoom::new(room_id, client);
         let u = s.get_url().await?;
-        println!("{}", u);
+        println!("{u}");
         Ok(())
     }
 }

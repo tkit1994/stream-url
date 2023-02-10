@@ -59,7 +59,7 @@ impl GetUrls for StreamRoom {
                             url_info.iter().map(move |u| {
                                 let host = u["host"].as_str().unwrap();
                                 let extra = u["extra"].as_str().unwrap();
-                                format!("{}{}{}", host, base_url, extra)
+                                format!("{host}{base_url}{extra}")
                             })
                         })
                     })
@@ -81,7 +81,7 @@ mod tests {
         let room_id = 21507954;
         let s = StreamRoom::new(room_id, client, 10000);
         let url = s.get_url().await?;
-        println!("{}", url);
+        println!("{url}");
         Ok(())
     }
 }
