@@ -1,5 +1,5 @@
 # Uncomment this if your project is hosted on GitHub:
-# github_url = "https://github.com/<user or organization>/<project>/"
+github_url = "https://github.com/tkit1994/stream-url"
 
 [version]
 current = "0.2.9"
