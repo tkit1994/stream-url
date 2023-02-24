@@ -60,7 +60,7 @@ impl GetUrls for StreamRoom {
         let res = self
             .cdns
             .iter()
-            .map(|cdn| format!("https://{cdn}/live/{key}.flv?uuid="))
+            .map(|cdn| format!("https://{cdn}/live/{key}.m3u8?uuid="))
             .collect::<Vec<_>>();
         Ok(res)
     }
