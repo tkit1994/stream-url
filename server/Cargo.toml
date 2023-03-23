@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.70"
-axum = "0.6.11"
+axum = "0.6.12"
 backend = { path = "../backend", default-features = false }
 clap = { version = "4.1.11", features = ["derive"] }
 reqwest = { version = "0.11.15", default-features = false, features = [
