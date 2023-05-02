@@ -17,7 +17,6 @@ pub struct StreamRoom {
 impl StreamRoom {
     pub fn new(room_id: u64, client: reqwest::Client) -> Self {
         let cdns = vec![
-            "akm-tct.douyucdn.cn".to_owned(),
             "hw-tct.douyucdn.cn".to_owned(),
             "hdltc1.douyucdn.cn".to_owned(),
             "hdltctwk.douyucdn2.cn".to_owned(),
