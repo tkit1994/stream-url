@@ -134,7 +134,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.2.11"
+version = "0.2.12"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -235,7 +235,7 @@ checksum = "4f0807fb6f644c83f3e4ec014fec9858c1c8b26a7db8eb5f0bde5817df9c1df7"
 
 [[package]]
 name = "cli"
-version = "0.2.11"
+version = "0.2.12"
 dependencies = [
  "anyhow",
  "backend",
@@ -901,7 +901,7 @@ dependencies = [
 
 [[package]]
 name = "server"
-version = "0.2.11"
+version = "0.2.12"
 dependencies = [
  "anyhow",
  "axum",
