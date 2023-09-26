@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = "1.0.75"
 axum = "0.6.20"
 backend = { path = "../backend", default-features = false }
-clap = { version = "4.4.4", features = ["derive"] }
+clap = { version = "4.4.5", features = ["derive"] }
 reqwest = { version = "0.11.20", default-features = false, features = [
 	"rustls-tls",
 ] }
