@@ -1,4 +1,4 @@
-use std::{time::Duration, net::SocketAddr};
+use std::{net::SocketAddr, time::Duration};
 
 use axum::{
     extract::{Json, Path, Query, State},
@@ -10,10 +10,10 @@ use backend::{GetUrl, GetUrls};
 use clap::Parser;
 use error::AppError;
 use serde::{Deserialize, Serialize};
-use tokio::{net::TcpListener};
+use tokio::net::TcpListener;
+use tower_http::timeout::TimeoutLayer;
 use tower_http::trace::TraceLayer;
 use tracing::Level;
-use tower_http::timeout::TimeoutLayer;
 
 mod error;
 #[derive(Debug, Parser)]
