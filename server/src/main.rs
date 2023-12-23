@@ -1,3 +1,5 @@
+use std::{time::Duration, net::SocketAddr};
+
 use axum::{
     extract::{Json, Path, Query, State},
     response::Redirect,
@@ -8,9 +10,10 @@ use backend::{GetUrl, GetUrls};
 use clap::Parser;
 use error::AppError;
 use serde::{Deserialize, Serialize};
-use tokio::signal;
+use tokio::{net::TcpListener};
 use tower_http::trace::TraceLayer;
 use tracing::Level;
+use tower_http::timeout::TimeoutLayer;
 
 mod error;
 #[derive(Debug, Parser)]
@@ -64,31 +67,7 @@ async fn redirect_url(
     let url = stream_room.get_url().await?;
     Ok(Redirect::temporary(url.as_str()))
 }
-async fn shutdown_signal() {
-    let ctrl_c = async {
-        signal::ctrl_c()
-            .await
-            .expect("failed to install Ctrl+C handler");
-    };
 
-    #[cfg(unix)]
-    let terminate = async {
-        signal::unix::signal(signal::unix::SignalKind::terminate())
-            .expect("failed to install signal handler")
-            .recv()
-            .await;
-    };
-
-    #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
-
-    tokio::select! {
-        _ = ctrl_c => {},
-        _ = terminate => {},
-    }
-
-    println!("Exiting stream-url server...");
-}
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
@@ -108,13 +87,14 @@ async fn main() -> anyhow::Result<()> {
         .route("/url", get(get_url).post(post_url))
         .route("/all_urls", post(get_all_urls))
         .route("/:platform/:room_id", get(redirect_url))
-        .layer(TraceLayer::new_for_http())
+        .layer((
+            TraceLayer::new_for_http(),
+            TimeoutLayer::new(Duration::from_secs(10)),
+        ))
         .with_state(client);
-    let addr = format!("{}:{}", args.addr, args.port).parse()?;
-    tracing::info!("Listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .with_graceful_shutdown(shutdown_signal())
-        .await?;
+    let addr: SocketAddr = format!("{}:{}", args.addr, args.port).parse()?;
+    tracing::info!("Listening on {:?}", addr);
+    let listener = TcpListener::bind(addr).await?;
+    axum::serve(listener, app.into_make_service()).await?;
     Ok(())
 }
