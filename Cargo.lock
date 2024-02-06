@@ -154,7 +154,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.2.12"
+version = "0.2.13"
 dependencies = [
  "anyhow",
  "base64 0.21.7",
@@ -273,7 +273,7 @@ checksum = "702fc72eb24e5a1e48ce58027a675bc24edd52096d5397d4aea7c6dd9eca0bd1"
 
 [[package]]
 name = "cli"
-version = "0.2.12"
+version = "0.2.13"
 dependencies = [
  "anyhow",
  "backend",
@@ -1028,7 +1028,7 @@ dependencies = [
 
 [[package]]
 name = "server"
-version = "0.2.12"
+version = "0.2.13"
 dependencies = [
  "anyhow",
  "axum",
