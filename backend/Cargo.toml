@@ -1,13 +1,12 @@
 [package]
 name = "backend"
-version = "0.2.12"
+version = "0.2.13"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 anyhow = "1.0.79"
-async-trait = "0.1.77"
 base64 = "0.21.7"
 md5 = "0.7.0"
 regex = "1.10.3"

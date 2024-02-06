@@ -1,23 +1,20 @@
+#![allow(async_fn_in_trait)]
 use anyhow::{bail, Context};
-use async_trait::async_trait;
 
-#[async_trait]
 pub trait GetUrls {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>>;
 }
 
-#[async_trait]
 pub trait GetUrl {
     async fn get_url(&self) -> anyhow::Result<String>;
 }
 
-#[async_trait]
 impl<T: GetUrls + Sync> GetUrl for T {
     async fn get_url(&self) -> anyhow::Result<String> {
         let res = self
             .get_urls()
             .await?
-            .get(0)
+            .first()
             .cloned()
             .context("No urls found");
         res
@@ -69,7 +66,6 @@ impl StreamRoom {
         }
     }
 }
-#[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         match self {

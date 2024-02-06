@@ -1,5 +1,5 @@
 use anyhow::Context;
-use async_trait::async_trait;
+
 use regex::Regex;
 use reqwest::header::{HeaderMap, HeaderValue, COOKIE};
 
@@ -16,7 +16,6 @@ impl StreamRoom {
     }
 }
 
-#[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let url = format!("https://live.douyin.com/{}", self.room_id);
