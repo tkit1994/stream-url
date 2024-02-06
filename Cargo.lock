@@ -157,7 +157,6 @@ name = "backend"
 version = "0.2.12"
 dependencies = [
  "anyhow",
- "async-trait",
  "base64 0.21.7",
  "md5",
  "regex",

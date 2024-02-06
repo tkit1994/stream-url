@@ -1,5 +1,5 @@
 use anyhow::{bail, Context};
-use async_trait::async_trait;
+
 use regex::Regex;
 
 use crate::GetUrls;
@@ -18,7 +18,6 @@ impl StreamRoom {
     }
 }
 
-#[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let room_url = format!("https://www.huya.com/{}", self.room_id);

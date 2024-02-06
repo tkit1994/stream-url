@@ -1,7 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::Context;
-use async_trait::async_trait;
+
 use regex::Regex;
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde_json::json;
@@ -29,7 +29,6 @@ impl StreamRoom {
     }
 }
 
-#[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let ts = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();

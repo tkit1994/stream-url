@@ -1,5 +1,5 @@
 use anyhow::Context;
-use async_trait::async_trait;
+
 use regex::Regex;
 use serde_json::json;
 
@@ -54,7 +54,6 @@ impl StreamRoom {
     }
 }
 
-#[async_trait]
 impl GetUrls for StreamRoom {
     async fn get_urls(&self) -> anyhow::Result<Vec<String>> {
         let (token, signature) = self.sign_token().await?;
