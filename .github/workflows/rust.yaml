@@ -77,22 +77,22 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: aarch64-unknown-linux-musl
           path: arm64
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: x86_64-unknown-linux-musl
           path: amd64
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: armv7-unknown-linux-musleabihf
           path: armv7
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: arm-unknown-linux-musleabihf
           path: armv6
@@ -155,7 +155,7 @@ jobs:
         uses: dawidd6/action-get-tag@v1
 
       - name: Dowload release files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           path: artifacts
 
