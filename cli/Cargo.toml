@@ -11,5 +11,5 @@ clap = { version = "4.5.26", features = ["derive"] }
 reqwest = { version = "0.12.4", default-features = false, features = [
 	"rustls-tls",
 ] }
-tokio = { version = "1.42.0", features = ["full"] }
+tokio = { version = "1.43.0", features = ["full"] }
 backend = { path = "../backend", default-features = false }
